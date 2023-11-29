@@ -134,7 +134,7 @@ int main(int argc, char** argv){
   for(int i = 0; i < argc; i++){
     if(strcmp(argv[i], "--profile") == 0){
       niter = 1;
-      nsub = 5;
+      nsub = 2;
     }
   }
   Array3D<scalar,_NF> data;
