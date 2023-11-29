@@ -145,7 +145,15 @@ __global__ void axpy(scalar* x, scalar* y, scalar* z, scalar a, scalar b, int n)
   }
 }
 
-int main(){
+int main(int argc, char** argv){
+  int niter = 10;
+  int nsub = 1000;
+  for(int i = 0; i < argc; i++){
+    if(strcmp(argv[i], "--profile") == 0){
+      niter = 1;
+      nsub = 5;
+    }
+  }
   Array3D<scalar,_NF> data;
   Array3D<int,2> neighbours;
   int n_elem = readmesh("square.txt", data, neighbours);
@@ -164,10 +172,8 @@ int main(){
   ERRCHK(cudaDeviceSynchronize());
 
   auto tstart = std::chrono::high_resolution_clock::now();
-  const int niter = 10;
   double ts[niter+1] = {0};
   for(int iter = 0; iter < niter; iter++){
-    int nsub = 1000;
     for(int i = 0; i < nsub; i++){
       // classical RK2
       dudt<<<ngrid_dudt,BLOCK_SIZE>>>(solution, neighbours, data, 9.81, 1000, solution, solution_mid, dt/2, n_elem);
