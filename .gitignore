@@ -1,0 +1,9 @@
+*.msh
+*.xdmf
+*.json
+main
+*.nsys-rep
+*.ncu-rep
+*.abin
+*.ameta
+*.png
