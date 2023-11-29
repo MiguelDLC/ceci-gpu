@@ -48,7 +48,7 @@ __global__ void dudt(
         soll[2] = fe_2d_interp_field(soli, 2, 0, phil);
 
         scalar bathl = fe_2d_interp_field(data, _BATH, tri_l, phil);
-        scalar c_l   = fe_2d_interp_field(data, _C   , tri_l, phil);
+        scalar c_l   = sqrt(g*bathl + soll[0]);
 
         scalar flux[3] = {0};
         if (tri_r >= 0) {
@@ -63,7 +63,7 @@ __global__ void dudt(
           solr[2] = fe_2d_interp_field(solution, 2, tri_r, phir);
 
           scalar bathr = fe_2d_interp_field(data, _BATH, tri_r, phir);
-          scalar c_r   = fe_2d_interp_field(data, _C   , tri_r, phir);
+          scalar c_r   = sqrt(g*bathr + solr[0]);
 
           iflux(c_l, c_r, soll, solr, bathl, bathr, nx, ny, g, flux);
         }

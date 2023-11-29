@@ -12,7 +12,7 @@ SRCS = $(TARGET).cu
 
 all: $(TARGET)
 
-$(TARGET): $(SRCS) main.h
+$(TARGET): $(SRCS) main.h Makefile
 	$(CC) $(CFLAGS) -o $(TARGET) $(SRCS)
 
 # This rule will clean up the generated files
