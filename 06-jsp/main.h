@@ -177,8 +177,8 @@ template <typename T>
 static T* malloc_manged_flags(size_t count){
   T* ptr;
   ERRCHK(cudaMallocManaged(&ptr, count*sizeof(T)));
-  ERRCHK(cudaMemAdvise(ptr, count, cudaMemAdviseSetPreferredLocation, cudaMemLocationTypeDevice));
-  ERRCHK(cudaMemAdvise(ptr, count, cudaMemAdviseSetAccessedBy, cudaMemLocationTypeDevice));
+  ERRCHK(cudaMemAdvise(ptr, count, cudaMemAdviseSetPreferredLocation, 0));
+  ERRCHK(cudaMemAdvise(ptr, count, cudaMemAdviseSetAccessedBy, 0));
   ERRCHK(cudaMemset(ptr, 0, count*sizeof(T)));
   return ptr;
 }
