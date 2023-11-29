@@ -3,9 +3,9 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 
-typedef double scalar;
+typedef float scalar;
 #define BLOCK_SIZE 128
-const char* meshfile = "/../data/square_gmsh.txt";
+const char* meshfile = "/../data/square.txt";
 
 enum {_X=0,_Y,_BATH,_GAMMA,_COR,_TAUX,_TAUY,_C,_NF};
 template<typename T, int n_fields>

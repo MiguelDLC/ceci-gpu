@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 
-typedef double scalar;
+typedef float scalar;
 #define BLOCK_SIZE 128
 const char* meshfile = "/../data/square_gmsh.txt";
 

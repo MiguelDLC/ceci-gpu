@@ -3,9 +3,9 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 
-typedef double scalar;
+typedef float scalar;
 #define BLOCK_SIZE 128
-const char* meshfile = "/../data/square_gmsh.txt";
+const char* meshfile = "/../data/square.txt";
 
 enum {_X=0,_Y,_BATH,_GAMMA,_COR,_TAUX,_TAUY,_C,_NF};
 template<typename T, int n_fields>
@@ -15,7 +15,7 @@ class Array3D {
   int n_elem;
   __host__ __device__ constexpr static int num_fields(){return n_fields;};
   __host__ __device__ inline T &operator()(int field, int node, int elem) {
-    return data[elem*(n_fields*3) + node*n_fields + field];
+    return data[n_elem*3*field + n_elem*node + elem];
   }
 };
 

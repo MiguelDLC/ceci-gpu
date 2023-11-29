@@ -1,9 +1,7 @@
-#%%
 import numpy as np
 from matplotlib import pyplot as plt
 
-
-with open("square.txt", "r") as f:
+with open("../data/square_gmsh.txt", "r") as f:
     line = f.readline()
     n = int(line)
     xy = np.zeros((n,3,2))
@@ -27,31 +25,11 @@ with open("solution.txt", "r") as f:
 
 
 tri = np.arange(n*3).reshape((n,3))
-# %%
-
-import slim4
-import numpy as np
-
-mesh = slim4.d2.Mesh("square.msh")
-mesh.create_xdmf("square")
-mesh.append_to_xdmf("square", 0, 0, [("eta", sol.T[0]), ("Huv", sol.T[1:])])
-
 plt.figure(figsize=(5,5))
 plt.tripcolor(xy[:,:,0].ravel(), xy[:,:,1].ravel(), sol[:,:,0].ravel(), triangles=tri, cmap="turbo", shading='gouraud')
 plt.triplot(xy[:,:,0].ravel(), xy[:,:,1].ravel(), triangles=tri, color="k", linewidth=0.1, alpha=0.2)
 plt.axis("equal")
 plt.axis("off")
 plt.savefig("eta.png", dpi=300, bbox_inches='tight', pad_inches=0)
-# plt.colorbar()
 plt.show()
-# %%
-
-try:
-    import climage
-    output = climage.convert('eta.png') 
-    print(output)
-except:
-    pass
-
-
-# %%
+plt.close()
