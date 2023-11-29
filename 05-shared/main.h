@@ -3,9 +3,9 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 
-typedef double scalar;
+typedef float scalar;
 #define BLOCK_SIZE 128
-const char* meshfile = "/../data/square_gmsh.txt";
+const char* meshfile = "/../data/square.txt";
 
 enum {_X=0,_Y,_BATH,_GAMMA,_COR,_TAUX,_TAUY,_C,_NF};
 template<typename T, int n_fields>
@@ -15,7 +15,7 @@ class Array3D {
   int n_elem;
   __host__ __device__ constexpr static int num_fields(){return n_fields;};
   __host__ __device__ inline T &operator()(int field, int node, int elem) {
-    return data[elem*(n_fields*3) + node*n_fields + field];
+    return data[n_elem*3*field + n_elem*node + elem];
   }
 };
 
@@ -37,7 +37,7 @@ class LocalArray3D {
 };
 
 __device__ inline static void fe_2d_closure_xi(scalar xie, int cl, scalar xit[2]) {
-  scalar x = (1+xie)/2.0;
+  scalar x = (1+xie)/2;
   switch (cl) {
     case 0 : xit[0]=  x; xit[1]=  0; break;
     case 1 : xit[0]=1-x; xit[1]=  x; break;
@@ -63,7 +63,7 @@ __device__ inline static scalar inv2x2(const scalar mat[2][2], scalar inv[2][2])
     inv[1][1] = 0;
     return 0;
   }
-  scalar ud = 1. / det;
+  scalar ud = 1 / det;
   inv[0][0] =  mat[1][1] * ud;
   inv[1][0] = -mat[1][0] * ud;
   inv[0][1] = -mat[0][1] * ud;
@@ -79,7 +79,7 @@ __device__ inline static void fe_2d_multiply_inv_mass_matrix(scalar jac, LocalAr
       rhsl[inode] = rhse(ifield, inode);
     }
     for (int inode = 0; inode <3; ++inode) {
-      rhse(ifield, inode) = (-6.0*(rhsl[0]+rhsl[1]+rhsl[2])+24.0*rhsl[inode])/jac;
+      rhse(ifield, inode) = (-6*(rhsl[0]+rhsl[1]+rhsl[2])+24*rhsl[inode])/jac;
     }
   }
 }
@@ -95,25 +95,25 @@ __device__ void inline static iflux(scalar c_l, scalar c_r, scalar soll[3], scal
   scalar Hl = etal+bath_l;
   scalar Hr = etar+bath_r;
 
-  scalar Hun = (Hunl+Hunr)/2.0;
+  scalar Hun = (Hunl+Hunr)/2;
   scalar c = fmax(c_l,c_r);
 
-  scalar flux_H = 0.0;
-  scalar flux_n = c*(Hunl-Hunr)/2.0;
-  scalar flux_t = 0.0;
+  scalar flux_H = 0;
+  scalar flux_n = c*(Hunl-Hunr)/2;
+  scalar flux_t = 0;
 
   scalar umaxl = sqrt(g*Hl);
   scalar umaxr = sqrt(g*Hr);
   scalar unl = Hunl/Hl, unr = Hunr/Hr;
 
   // advection
-  scalar un = (unl+unr)/2.0;
+  scalar un = (unl+unr)/2;
   flux_t += un*(un > 0 ? Hutl : Hutr);
-  flux_n += 0.5*(Hunl*unl + Hunr*unr);
+  flux_n += (Hunl*unl + Hunr*unr)/2;
 
   // gravity
-  flux_H += Hun + c*(etal-etar)/2.0;
-  flux_n -= g*(bath_l + (etal+etar)/2.0)*(etal-etar)/2.0;
+  flux_H += Hun + c*(etal-etar)/2;
+  flux_n -= g*(bath_l + (etal+etar)/2)*(etal-etar)/2;
 
   scalar flux_u = flux_n*nx+flux_t*tx;
   scalar flux_v = flux_n*ny+flux_t*ty;

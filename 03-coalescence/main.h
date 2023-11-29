@@ -63,7 +63,7 @@ __device__ inline static scalar inv2x2(const scalar mat[2][2], scalar inv[2][2])
     inv[1][1] = 0;
     return 0;
   }
-  scalar ud = 1.f / det;
+  scalar ud = 1. / det;
   inv[0][0] =  mat[1][1] * ud;
   inv[1][0] = -mat[1][0] * ud;
   inv[0][1] = -mat[0][1] * ud;
