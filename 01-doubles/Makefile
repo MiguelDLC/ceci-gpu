@@ -2,7 +2,7 @@
 CC = nvcc
 
 # Compiler flags
-CFLAGS = -g -O3 -std=c++17
+CFLAGS = -g -O3 -std=c++17 --generate-line-info
 
 # the build target executable:
 TARGET = main

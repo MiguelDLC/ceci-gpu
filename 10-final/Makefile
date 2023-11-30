@@ -2,7 +2,7 @@
 CC = nvcc
 
 # Compiler flags
-CFLAGS = -g -O3 -std=c++17 --use_fast_math --extra-device-vectorization
+CFLAGS = -g -O3 -std=c++17 --generate-line-info --use_fast_math --extra-device-vectorization
 
 # the build target executable:
 TARGET = main
