@@ -7,7 +7,7 @@ typedef float scalar;
 #define BLOCK_SIZE 128
 const char* meshfile = "/../data/square.txt";
 
-enum {_X=0,_Y,_BATH,_GAMMA,_COR,_TAUX,_TAUY,_C,_NF};
+enum {_X=0,_Y,_BATH,_GAMMA,_COR,_TAUX,_TAUY,_C,_KAPPA,_TRASH0,_TRASH1,_TRASH2,_NF};
 template<typename T, int n_fields>
 class Array3D {
   public:
