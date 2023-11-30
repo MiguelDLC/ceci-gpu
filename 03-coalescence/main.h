@@ -15,7 +15,9 @@ class Array3D {
   int n_elem;
   __host__ __device__ constexpr static int num_fields(){return n_fields;};
   __host__ __device__ inline T &operator()(int field, int node, int elem) {
+    /////////// EXERCISE: use a coalescent data layout. Is it really better ? ///////////
     return data[elem*(n_fields*3) + node*n_fields + field];
+    /////////// END OF THE EXERCISE ///////////
   }
 };
 

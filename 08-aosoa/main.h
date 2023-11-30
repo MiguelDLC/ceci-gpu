@@ -16,7 +16,9 @@ class Array3D {
   int n_elem;
   __host__ __device__ constexpr static int num_fields(){return n_fields;};
   __host__ __device__ inline T &operator()(int field, int node, int elem) {
+    /////////// EXERCISE: use an arrays of structs of arrays (AOSOA) layout. The buffers are large enough for n_elem rounded up to a multiple of AOSOA ///////////
     return data[n_elem*3*field + n_elem*node + elem];
+    /////////// END OF THE EXERCISE ///////////
   }
 };
 

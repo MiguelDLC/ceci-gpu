@@ -1,8 +1,10 @@
 # Compiler
 CC = nvcc
 
+########## EXERCISE: add the compiler flags for fast math ##########
 # Compiler flags
 CFLAGS = -g -O3 -std=c++17 --generate-line-info
+########## END OF EXERCISE ##########
 
 # the build target executable:
 TARGET = main

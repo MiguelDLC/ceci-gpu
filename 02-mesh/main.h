@@ -5,7 +5,10 @@
 
 typedef float scalar;
 #define BLOCK_SIZE 128
+
+/////////// EXERCISE: reorder the mesh or use a reordered mesh ///////////
 const char* meshfile = "/../data/square_gmsh.txt";
+/////////// END OF THE EXERCISE, what a surprise, there was indeed already another mesh file in the data folder ///////////
 
 enum {_X=0,_Y,_BATH,_GAMMA,_COR,_TAUX,_TAUY,_C,_KAPPA,_TRASH0,_TRASH1,_TRASH2,_NF};
 template<typename T, int n_fields>

@@ -14,13 +14,20 @@ __global__ void dudt(
   scalar rhs_coeff,
   int n_triangles
 ){
-
+  /////////// EXERCISE: use shared memory to store x, y and the bathymetry and use it in the kernel
+  // __shared__ SharedArray3D<3> xybath;
   int ie = blockIdx.x*blockDim.x + threadIdx.x;
   // int ie_loc = threadIdx.x;
 
   if(ie < n_triangles){
     auto soli = load_elem(solution, ie);
     LocalArray3D<3> rhsi(0);
+
+    // for(int field = 0; field < 3; field++){
+    //   for(int node = 0; node < 3; node++){
+    //     xybath(field, node, ie_loc) = data(field, node, ie); // notice that xybath is accessed with ie_loc
+    //   }
+    // }
 
     // edge terms
     for (int side = 0; side <3; ++side) {
@@ -30,10 +37,10 @@ __global__ void dudt(
       int closure_r = neighbours(1, side, tri_l);
 
       scalar length,nx,ny;
-      scalar x0 = data(_X, side,       ie);
-      scalar x1 = data(_X, (side+1)%3, ie);
-      scalar y0 = data(_Y, side,       ie);
-      scalar y1 = data(_Y, (side+1)%3, ie);
+      scalar x0 = data(_X, side,       ie); // hint
+      scalar x1 = data(_X, (side+1)%3, ie); // hint
+      scalar y0 = data(_Y, side,       ie); // hint
+      scalar y1 = data(_Y, (side+1)%3, ie); // hint
       length = hypot(x0-x1,y0-y1);
       nx = -(y0-y1)/length;
       ny = (x0-x1)/length;
@@ -49,7 +56,7 @@ __global__ void dudt(
         soll[1] = fe_2d_interp_field(soli, 1, 0, phil);
         soll[2] = fe_2d_interp_field(soli, 2, 0, phil);
 
-        scalar bathl = fe_2d_interp_field(data, _BATH, tri_l, phil);
+        scalar bathl = fe_2d_interp_field(data, _BATH, tri_l, phil); // hint
         scalar c_l   = sqrt(g*bathl + soll[0]);
 
         scalar flux[3] = {0};
@@ -64,7 +71,7 @@ __global__ void dudt(
           solr[1] = fe_2d_interp_field(solution, 1, tri_r, phir);
           solr[2] = fe_2d_interp_field(solution, 2, tri_r, phir);
 
-          scalar bathr = fe_2d_interp_field(data, _BATH, tri_r, phir);
+          scalar bathr = fe_2d_interp_field(data, _BATH, tri_r, phir); // !warning : this is for the right triangle : it's not present in the shared array in general!
           scalar c_r   = sqrt(g*bathr + solr[0]);
 
           iflux(c_l, c_r, soll, solr, bathl, bathr, nx, ny, g, flux);
@@ -78,7 +85,7 @@ __global__ void dudt(
 
     // volume term
     scalar dphi[3][2], jac;
-    fe_2d_triangle(data,ie,dphi,&jac);
+    fe_2d_triangle(data,ie,dphi,&jac); // hint (this reads x and y)
 
     for (int iq=0; iq < gauss_tri_n; ++iq) {
       scalar phi[3];
@@ -95,14 +102,14 @@ __global__ void dudt(
       fe_2d_grad_field(soli, 2, 0, dphi, dsol[2]);
 
       scalar bath, cor, tau[2], gamma;
-      bath   = fe_2d_interp_field(data, _BATH , ie, phi);
+      bath   = fe_2d_interp_field(data, _BATH , ie, phi); // hint
       cor    = fe_2d_interp_field(data, _COR  , ie, phi);
       tau[0] = fe_2d_interp_field(data, _TAUX , ie, phi);
       tau[1] = fe_2d_interp_field(data, _TAUY , ie, phi);
       gamma  = fe_2d_interp_field(data, _GAMMA, ie, phi);
       
       scalar dbath[2];
-      fe_2d_grad_field(data, _BATH, ie, dphi, dbath);
+      fe_2d_grad_field(data, _BATH, ie, dphi, dbath); // hint
 
       scalar s[9] = {0};
       fvolume(sol, dsol, bath, dbath, cor, tau, s, g, rho_0, gamma);
@@ -110,6 +117,7 @@ __global__ void dudt(
       scalar w = gauss_tri_w[iq]*jac;
       fe_2d_assemble_term(rhsi,3,3,phi,dphi,w,s);
     }
+    /////////// END OF THE EXERCISE  //////////////
 
     // inverse mass matrix
     fe_2d_multiply_inv_mass_matrix(jac,rhsi);

@@ -3,6 +3,7 @@
 #include <math.h>
 #include <chrono>
 
+/////////// EXERCISE: add the arguments of teh axpy kernel to the dudt kernel and get rid of the axpy kernel
 __global__ void dudt(
   Array3D<scalar,3> solution,
   Array3D<int,2> neighbours,
@@ -121,6 +122,7 @@ __global__ void dudt(
   }
 }
 
+// this should be removed/ not used
 __global__ void axpy(scalar* x, scalar* y, scalar* z, scalar a, scalar b, int n){
   int i = blockIdx.x*blockDim.x + threadIdx.x;
   if(i < n){
@@ -189,3 +191,4 @@ int main(int argc, char** argv){
   printf("Std : %.3f us\n", dt_std*1e6);
   return 0;
 }
+/////////// END OF THE EXERCISE, obviously since it's the end of the file :D //////////////

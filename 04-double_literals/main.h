@@ -36,6 +36,7 @@ class LocalArray3D {
   }
 };
 
+/////////// EXERCISE: find the double literals and replace them with floats of ints ///////////
 __device__ inline static void fe_2d_closure_xi(scalar xie, int cl, scalar xit[2]) {
   scalar x = (1+xie)/2.0;
   switch (cl) {
