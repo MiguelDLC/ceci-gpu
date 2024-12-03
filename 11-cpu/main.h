@@ -408,7 +408,7 @@ class SharedArray3D {
   public:
   v_scalar data[BLOCK_SIZE*n_fields*3];
   __device__ constexpr static int num_fields(){return n_fields;};
-  __device__ inline v_scalar &operator()(int field, int node, int elem) {
+  __device__ inline v_scalar &operator()(int field, int node, v_index elem) {
     return data[BLOCK_SIZE*3*field + BLOCK_SIZE*node];
   }
 };
@@ -523,6 +523,7 @@ void ava_for(size_t from, size_t to, K k) {
   //   printf("ava_for only supports block_size=1 in CPU, not %i\n", block_size);
   //   exit(1);
   // }
+  to = (to + AOSOA - 1)/AOSOA;
   std::for_each(std::execution::unseq, (char*)from, (char*)to, [k](auto &i) {k((size_t)&i);});
 }
 

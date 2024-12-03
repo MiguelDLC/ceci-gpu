@@ -15,9 +15,9 @@ void dudt(
   int n_triangles
 ){
 
-  ava_for<1>(0, n_triangles,  [=]__device__(int ie) {
+  ava_for<1>(0, n_triangles,  [=]__device__(v_index iie) {
     __shared__ SharedArray3D<3> xybath;
-    int ie_loc = ie % BLOCK_SIZE;
+    v_index ie_loc = ie % BLOCK_SIZE;
     auto soli = load_elem(solution, ie);
     LocalArray3D<3> rhsi(0);
 
